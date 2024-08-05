@@ -68,6 +68,11 @@ class UserController extends GetxController {
     }
   }
 
+  void clearUserData() {
+    userData.value = {};
+    role.value = '';
+  }
+
   String get username => userData['username'] ?? '';
   String get fullName => '${userData['firstname'] ?? ''} ${userData['lastname'] ?? ''}'.trim();
   String get email => userData['email'] ?? '';

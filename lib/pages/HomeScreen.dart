@@ -262,7 +262,36 @@ class HomeScreen extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      Icon(Icons.person, size: 40, color: Colors.blue),
+                                      IconButton(
+                                        icon: Icon(Icons.delete, color: Colors.red),
+                                        onPressed: () {
+                                          // Tampilkan dialog konfirmasi sebelum menghapus
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Konfirmasi'),
+                                                content: Text('Apakah Anda yakin ingin menghapus akun anak ini?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: Text('Batal'),
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text('Hapus'),
+                                                    onPressed: () {
+                                                      childAccountController.deleteChildAccount(child['id'].toString());
+                                                      Navigator.of(context).pop();
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
                                     ],
                                   ),
                                 );

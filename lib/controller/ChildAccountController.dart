@@ -11,6 +11,32 @@ class ChildAccountController extends GetxController {
     fetchChildAccounts();
   }
 
+  Future<void> deleteChildAccount(String childId) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
+      if (token != null) {
+        var response = await Dio().post(
+          'http://baha.adrianyan.tech:8000/api/delete-child-account/$childId',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+
+        if (response.statusCode == 200) {
+          fetchChildAccounts(); // Refresh the child accounts list
+          Get.snackbar('Success', 'Child account deleted successfully');
+        } else {
+          Get.snackbar('Error', 'Failed to delete child account');
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'An error occurred while deleting the child account');
+    }
+  }
+
   Future<void> fetchChildAccounts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('token');
