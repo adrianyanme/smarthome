@@ -191,10 +191,6 @@ class HomeScreen extends StatelessWidget {
                               )),
                             ],
                           ),
-                          Obx(() => CircleAvatar(
-                            radius: 30,
-                            backgroundImage: NetworkImage(userController.profileImage),
-                          )),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -380,36 +376,37 @@ class HomeScreen extends StatelessWidget {
                                           }
                                         },
                                       ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete, color: Colors.red),
-                                        onPressed: () {
-                                          // Tampilkan dialog konfirmasi sebelum menghapus
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text('Konfirmasi'),
-                                                content: Text('Apakah Anda yakin ingin menghapus perangkat ini?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: Text('Batal'),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text('Hapus'),
-                                                    onPressed: () {
-                                                      listDeviceController.deleteDevice(serialNumber);
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
+                                      if (userController.role.value == 'master') // Hanya tampilkan tombol hapus jika peran adalah master
+                                        IconButton(
+                                          icon: Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () {
+                                            // Tampilkan dialog konfirmasi sebelum menghapus
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text('Konfirmasi'),
+                                                  content: Text('Apakah Anda yakin ingin menghapus perangkat ini?'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text('Batal'),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                    TextButton(
+                                                      child: Text('Hapus'),
+                                                      onPressed: () {
+                                                        listDeviceController.deleteDevice(serialNumber);
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                     ],
                                   ),
                                 ],

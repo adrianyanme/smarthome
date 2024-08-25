@@ -1,9 +1,12 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:smartdoor/controller/RegisterController.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+  RegisterPage({super.key});
+
+  final RegisterController registerController = Get.put(RegisterController());
 
   @override
   Widget build(BuildContext context) {
@@ -55,21 +58,9 @@ class RegisterPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const TextField(
-                      decoration: InputDecoration(
-                        labelText: 'Username',
-                        labelStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.teal),
-                        ),
-                      ),
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      controller: registerController.emailController,
+                      decoration: const InputDecoration(
                         labelText: 'E-mail',
                         labelStyle: TextStyle(color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
@@ -79,10 +70,53 @@ class RegisterPage extends StatelessWidget {
                           borderSide: BorderSide(color: Colors.teal),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      controller: registerController.usernameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Username',
+                        labelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    TextField(
+                      controller: registerController.firstnameController,
+                      decoration: const InputDecoration(
+                        labelText: 'First Name',
+                        labelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    TextField(
+                      controller: registerController.lastnameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Last Name',
+                        labelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal),
+                        ),
+                      ),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    TextField(
+                      controller: registerController.passwordController,
+                      decoration: const InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
@@ -92,14 +126,15 @@ class RegisterPage extends StatelessWidget {
                           borderSide: BorderSide(color: Colors.teal),
                         ),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
+                      obscureText: true,
                     ),
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text(
-                          'have account?',
+                          'Have an account?',
                           style: TextStyle(color: Colors.black),
                         ),
                         TextButton(
@@ -114,21 +149,25 @@ class RegisterPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Aksi saat tombol Register ditekan
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text('Register'),
-                    ),
+                    Obx(() {
+                      return registerController.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () {
+                                registerController.register();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text('Register'),
+                            );
+                    }),
                   ],
                 ),
               ),
