@@ -140,6 +140,32 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Future<bool?> _confirmDismiss(BuildContext context, String title, String content) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Hapus'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,70 +251,60 @@ class HomeScreen extends StatelessWidget {
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
                                 var child = childAccountController.childAccounts[index];
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  padding: const EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 2,
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
+                                return Dismissible(
+                                  key: Key(child['id'].toString()),
+                                  direction: DismissDirection.endToStart,
+                                  confirmDismiss: (direction) async {
+                                    return await _confirmDismiss(
+                                      context,
+                                      'Konfirmasi',
+                                      'Apakah Anda yakin ingin menghapus akun anak ini?',
+                                    );
+                                  },
+                                  onDismissed: (direction) {
+                                    childAccountController.deleteChildAccount(child['id'].toString());
+                                  },
+                                  background: Container(
+                                    color: Colors.red,
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    child: Icon(Icons.delete, color: Colors.white),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${child['firstname']} ${child['lastname']}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text('Username: ${child['username']}'),
-                                            Text('Email: ${child['email']}'),
-                                          ],
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 3),
                                         ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.delete, color: Colors.red),
-                                        onPressed: () {
-                                          // Tampilkan dialog konfirmasi sebelum menghapus
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text('Konfirmasi'),
-                                                content: Text('Apakah Anda yakin ingin menghapus akun anak ini?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    child: Text('Batal'),
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: Text('Hapus'),
-                                                    onPressed: () {
-                                                      childAccountController.deleteChildAccount(child['id'].toString());
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ],
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${child['firstname']} ${child['lastname']}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Text('Username: ${child['username']}'),
+                                              Text('Email: ${child['email']}'),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
@@ -338,78 +354,63 @@ class HomeScreen extends StatelessWidget {
                             var device = listDeviceController.devices[index];
                             String serialNumber = device['serial_number'];
                             bool isOpen = device['status_perangkat'] == 'open';
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
+                            return Dismissible(
+                              key: Key(serialNumber),
+                              direction: DismissDirection.endToStart,
+                              confirmDismiss: (direction) async {
+                                return await _confirmDismiss(
+                                  context,
+                                  'Konfirmasi',
+                                  'Apakah Anda yakin ingin menghapus perangkat ini?',
+                                );
+                              },
+                              onDismissed: (direction) {
+                                listDeviceController.deleteDevice(serialNumber);
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.symmetric(horizontal: 20),
+                                child: Icon(Icons.delete, color: Colors.white),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Pintu: ${device['nama_perangkat']}',
-                                    style: TextStyle(fontSize: 16, color: Colors.black),
-                                  ),
-                                  Row(
-                                    children: [
-                                      ToggleSwitch(
-                                        initialLabelIndex: isOpen ? 1 : 0,
-                                        totalSwitches: 2,
-                                        labels: ['Off', 'On'],
-                                        activeBgColors: [[Colors.red], [Colors.green]],
-                                        onToggle: (index) {
-                                          if (index != null) {
-                                            bool newState = index == 1;
-                                            relayController.toggleDevice(serialNumber, newState).then((_) {
-                                              listDeviceController.fetchUserDevices();
-                                            });
-                                          }
-                                        },
-                                      ),
-                                      if (userController.role.value == 'master') // Hanya tampilkan tombol hapus jika peran adalah master
-                                        IconButton(
-                                          icon: Icon(Icons.delete, color: Colors.red),
-                                          onPressed: () {
-                                            // Tampilkan dialog konfirmasi sebelum menghapus
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text('Konfirmasi'),
-                                                  content: Text('Apakah Anda yakin ingin menghapus perangkat ini?'),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      child: Text('Batal'),
-                                                      onPressed: () {
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                    ),
-                                                    TextButton(
-                                                      child: Text('Hapus'),
-                                                      onPressed: () {
-                                                        listDeviceController.deleteDevice(serialNumber);
-                                                        Navigator.of(context).pop();
-                                                      },
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                        ),
-                                    ],
-                                  ),
-                                ],
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Pintu: ${device['nama_perangkat']}',
+                                      style: TextStyle(fontSize: 16, color: Colors.black),
+                                    ),
+                                    ToggleSwitch(
+                                      initialLabelIndex: isOpen ? 1 : 0,
+                                      totalSwitches: 2,
+                                      labels: ['Off', 'On'],
+                                      activeBgColors: [[Colors.red], [Colors.green]],
+                                      onToggle: (index) {
+                                        if (index != null) {
+                                          bool newState = index == 1;
+                                          relayController.toggleDevice(serialNumber, newState).then((_) {
+                                            listDeviceController.fetchUserDevices();
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },

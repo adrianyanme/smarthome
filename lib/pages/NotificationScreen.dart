@@ -1,7 +1,7 @@
    import 'package:flutter/material.dart';
    import 'package:get/get.dart';
 import 'package:smartdoor/controller/LogController.dart';
-   
+import 'package:intl/intl.dart'; // Tambahkan ini
 
    class NotificationScreen extends StatefulWidget {
      @override
@@ -50,10 +50,16 @@ import 'package:smartdoor/controller/LogController.dart';
                      ),
                    );
                  } else {
+                   // Membalik urutan log
+                   var reversedLogs = logController.logs.reversed.toList();
                    return ListView.builder(
-                     itemCount: logController.logs.length,
+                     itemCount: reversedLogs.length,
                      itemBuilder: (context, index) {
-                       var log = logController.logs[index];
+                       var log = reversedLogs[index];
+                       // Format tanggal dan waktu
+                       var formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.parse(log['created_at']));
+                       // Tentukan ikon berdasarkan aksi
+                       var icon = log['action'] == 'open' ? Icons.lock_open : Icons.lock;
                        return Container(
                          margin: const EdgeInsets.only(bottom: 10),
                          padding: const EdgeInsets.all(16.0),
@@ -71,7 +77,7 @@ import 'package:smartdoor/controller/LogController.dart';
                          ),
                          child: Row(
                            children: [
-                             const Icon(Icons.lock, size: 40, color: Colors.black),
+                             Icon(icon, size: 40, color: Colors.black),
                              const SizedBox(width: 10),
                              Column(
                                crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +90,7 @@ import 'package:smartdoor/controller/LogController.dart';
                                    ),
                                  ),
                                  Text(
-                                   log['created_at'],
+                                   formattedDate,
                                    style: const TextStyle(
                                      fontSize: 14,
                                      color: Colors.grey,

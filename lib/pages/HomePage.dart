@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications),
-              label: 'Notification',
+              label: 'Log',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
