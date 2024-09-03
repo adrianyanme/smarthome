@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:smartdoor/controller/UserController.dart';
 import 'package:smartdoor/controller/ListDeviceController.dart';
+
 import 'package:smartdoor/controller/RelayController.dart';
+
 import 'package:smartdoor/controller/AddDeviceController.dart';
+
 import 'package:smartdoor/controller/ChildAccountController.dart';
+
 import 'package:smartdoor/controller/AddChildAccountController.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,23 +18,35 @@ class HomeScreen extends StatelessWidget {
     Get.put(UserController());
     Get.put(ListDeviceController());
     Get.put(RelayController());
+
     Get.put(AddDeviceController());
+
     Get.put(ChildAccountController());
+
     Get.put(AddChildAccountController());
   }
 
   final UserController userController = Get.find<UserController>();
-  final ListDeviceController listDeviceController = Get.find<ListDeviceController>();
+
+  final ListDeviceController listDeviceController =
+      Get.find<ListDeviceController>();
+
   final RelayController relayController = Get.find<RelayController>();
-  final AddDeviceController addDeviceController = Get.find<AddDeviceController>();
-  final ChildAccountController childAccountController = Get.find<ChildAccountController>();
-  final AddChildAccountController addChildAccountController = Get.find<AddChildAccountController>();
+
+  final AddDeviceController addDeviceController =
+      Get.find<AddDeviceController>();
+  final ChildAccountController childAccountController =
+      Get.find<ChildAccountController>();
+
+  final AddChildAccountController addChildAccountController =
+      Get.find<AddChildAccountController>();
 
   void _showAddChildAccountDialog(BuildContext context) {
     final TextEditingController emailController = TextEditingController();
     final TextEditingController usernameController = TextEditingController();
     final TextEditingController firstnameController = TextEditingController();
     final TextEditingController lastnameController = TextEditingController();
+
     final TextEditingController passwordController = TextEditingController();
 
     showDialog(
@@ -92,8 +109,11 @@ class HomeScreen extends StatelessWidget {
   }
 
   void _showAddDeviceDialog(BuildContext context) {
-    final TextEditingController serialNumberController = TextEditingController();
-    final TextEditingController namaPerangkatController = TextEditingController();
+    final TextEditingController serialNumberController =
+        TextEditingController();
+
+    final TextEditingController namaPerangkatController =
+        TextEditingController();
 
     showDialog(
       context: context,
@@ -131,6 +151,7 @@ class HomeScreen extends StatelessWidget {
                   serialNumberController.text,
                   namaPerangkatController.text,
                 );
+
                 Navigator.of(context).pop();
               },
             ),
@@ -140,7 +161,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Future<bool?> _confirmDismiss(BuildContext context, String title, String content) {
+  Future<bool?> _confirmDismiss(
+      BuildContext context, String title, String content) {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -172,6 +194,7 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           // Background image
+
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -208,32 +231,46 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                               Obx(() => Text(
-                                userController.fullName,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              )),
+                                    userController.fullName,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  )),
                             ],
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 20),
                       // Security section
-                      const Text(
-                        'SECURITY',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+                      Obx(() {
+                        if (userController.role.value == 'master') {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'List Child',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          );
+                        } else {
+                          return Container();
+                        }
+                      }),
                     ]),
                   ),
                 ),
+
                 // Child accounts list
+
                 Obx(() {
                   if (userController.role.value == 'master') {
                     return SliverPadding(
@@ -243,14 +280,17 @@ class HomeScreen extends StatelessWidget {
                           return SliverToBoxAdapter(
                             child: Text(
                               'No child accounts found',
-                              style: TextStyle(fontSize: 16, color: Colors.black),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.black),
                             ),
                           );
                         } else {
                           return SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                var child = childAccountController.childAccounts[index];
+                                var child =
+                                    childAccountController.childAccounts[index];
+
                                 return Dismissible(
                                   key: Key(child['id'].toString()),
                                   direction: DismissDirection.endToStart,
@@ -262,13 +302,16 @@ class HomeScreen extends StatelessWidget {
                                     );
                                   },
                                   onDismissed: (direction) {
-                                    childAccountController.deleteChildAccount(child['id'].toString());
+                                    childAccountController.deleteChildAccount(
+                                        child['id'].toString());
                                   },
                                   background: Container(
                                     color: Colors.red,
                                     alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
-                                    child: Icon(Icons.delete, color: Colors.white),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child:
+                                        Icon(Icons.delete, color: Colors.white),
                                   ),
                                   child: Container(
                                     margin: const EdgeInsets.only(bottom: 10),
@@ -289,7 +332,8 @@ class HomeScreen extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Text(
                                                 '${child['firstname']} ${child['lastname']}',
@@ -298,7 +342,8 @@ class HomeScreen extends StatelessWidget {
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              Text('Username: ${child['username']}'),
+                                              Text(
+                                                  'Username: ${child['username']}'),
                                               Text('Email: ${child['email']}'),
                                             ],
                                           ),
@@ -308,7 +353,8 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              childCount: childAccountController.childAccounts.length,
+                              childCount:
+                                  childAccountController.childAccounts.length,
                             ),
                           );
                         }
@@ -318,12 +364,15 @@ class HomeScreen extends StatelessWidget {
                     return SliverToBoxAdapter(child: Container());
                   }
                 }),
+
                 SliverPadding(
                   padding: const EdgeInsets.all(16.0),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       const SizedBox(height: 20),
+
                       // Devices section
+
                       const Text(
                         'DEVICES',
                         style: TextStyle(
@@ -332,11 +381,13 @@ class HomeScreen extends StatelessWidget {
                           color: Colors.black,
                         ),
                       ),
+
                       const SizedBox(height: 10),
                     ]),
                   ),
                 ),
                 // Devices list
+
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   sliver: Obx(() {
@@ -352,67 +403,134 @@ class HomeScreen extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             var device = listDeviceController.devices[index];
+
                             String serialNumber = device['serial_number'];
+
                             bool isOpen = device['status_perangkat'] == 'open';
-                            return Dismissible(
-                              key: Key(serialNumber),
-                              direction: DismissDirection.endToStart,
-                              confirmDismiss: (direction) async {
-                                return await _confirmDismiss(
-                                  context,
-                                  'Konfirmasi',
-                                  'Apakah Anda yakin ingin menghapus perangkat ini?',
-                                );
-                              },
-                              onDismissed: (direction) {
-                                listDeviceController.deleteDevice(serialNumber);
-                              },
-                              background: Container(
-                                color: Colors.red,
-                                alignment: Alignment.centerRight,
-                                padding: EdgeInsets.symmetric(horizontal: 20),
-                                child: Icon(Icons.delete, color: Colors.white),
-                              ),
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                padding: const EdgeInsets.all(16.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: const Offset(0, 3),
+
+                            return userController.role.value == 'master'
+                                ? Dismissible(
+                                    key: Key(serialNumber),
+                                    direction: DismissDirection.endToStart,
+                                    confirmDismiss: (direction) async {
+                                      return await _confirmDismiss(
+                                        context,
+                                        'Konfirmasi',
+                                        'Apakah Anda yakin ingin menghapus perangkat ini?',
+                                      );
+                                    },
+                                    onDismissed: (direction) {
+                                      listDeviceController
+                                          .deleteDevice(serialNumber);
+                                    },
+                                    background: Container(
+                                      color: Colors.red,
+                                      alignment: Alignment.centerRight,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
+                                      child: Icon(Icons.delete,
+                                          color: Colors.white),
                                     ),
-                                  ],
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Pintu: ${device['nama_perangkat']}',
-                                      style: TextStyle(fontSize: 16, color: Colors.black),
+                                    child: Container(
+                                      margin: const EdgeInsets.only(bottom: 10),
+                                      padding: const EdgeInsets.all(16.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 2,
+                                            blurRadius: 5,
+                                            offset: const Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Pintu: ${device['nama_perangkat']}',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black),
+                                          ),
+                                          ToggleSwitch(
+                                            initialLabelIndex: isOpen ? 1 : 0,
+                                            totalSwitches: 2,
+                                            labels: ['Off', 'On'],
+                                            activeBgColors: [
+                                              [Colors.red],
+                                              [Colors.green]
+                                            ],
+                                            onToggle: (index) {
+                                              if (index != null) {
+                                                bool newState = index == 1;
+
+                                                relayController
+                                                    .toggleDevice(
+                                                        serialNumber, newState)
+                                                    .then((_) {
+                                                  listDeviceController
+                                                      .fetchUserDevices();
+                                                });
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    ToggleSwitch(
-                                      initialLabelIndex: isOpen ? 1 : 0,
-                                      totalSwitches: 2,
-                                      labels: ['Off', 'On'],
-                                      activeBgColors: [[Colors.red], [Colors.green]],
-                                      onToggle: (index) {
-                                        if (index != null) {
-                                          bool newState = index == 1;
-                                          relayController.toggleDevice(serialNumber, newState).then((_) {
-                                            listDeviceController.fetchUserDevices();
-                                          });
-                                        }
-                                      },
+                                  )
+                                : Container(
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
-                            );
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Pintu: ${device['nama_perangkat']}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black),
+                                        ),
+                                        ToggleSwitch(
+                                          initialLabelIndex: isOpen ? 1 : 0,
+                                          totalSwitches: 2,
+                                          labels: ['Off', 'On'],
+                                          activeBgColors: [
+                                            [Colors.red],
+                                            [Colors.green]
+                                          ],
+                                          onToggle: (index) {
+                                            if (index != null) {
+                                              bool newState = index == 1;
+                                              relayController
+                                                  .toggleDevice(
+                                                      serialNumber, newState)
+                                                  .then((_) {
+                                                listDeviceController
+                                                    .fetchUserDevices();
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
                           },
                           childCount: listDeviceController.devices.length,
                         ),
